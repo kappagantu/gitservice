@@ -111,6 +111,8 @@ class SourceModel(BaseModel):
     modified_code: List[str] = Field(description="source code lines including fix")
     modified_code_for_pr: List[str] = Field(description="provide modified source code for pull request")
 
+# --- RAG Chain with Source Information ---
+
 def create_rag_chain_with_source(llm, vectorstore):
     # 1. Define the Pydantic output parser
     output_parser = PydanticOutputParser(pydantic_object=SourceModel)
@@ -118,10 +120,14 @@ def create_rag_chain_with_source(llm, vectorstore):
     # 2. Get format instructions for the prompt
     format_instructions = output_parser.get_format_instructions()
 
-    # 3. Define the prompt for the chain
+    # 3. Define the prompt for the QA chain
+    # It's crucial to include format_instructions in your prompt
+    # ... inside create_rag_chain_with_source, in your template definition ...
 
-    template = """You are a highly accurate AI assistant. Your sole task is to answer the user's question based STRICTLY on the provided context. 
+    # ... inside create_rag_chain_with_source, in your template definition ...
+
     
+    templatelatest = """You are a highly accurate AI assistant. Your sole task is to answer the user's question based STRICTLY on the provided context. 
     Instructions:
     1. Read the source file content line by line.
     2. Count ALL lines — including blank lines — as part of the source code. Do not skip any line.
@@ -143,8 +149,9 @@ def create_rag_chain_with_source(llm, vectorstore):
     {format_instructions}
     Answer (ONLY the JSON object):"""
 
+    # Added "Answer (ONLY the JSON object):" for stronger instruction
 
-    QA_CHAIN_PROMPT = PromptTemplate.from_template(template).partial(
+    QA_CHAIN_PROMPT = PromptTemplate.from_template(templatelatest).partial(
         format_instructions=format_instructions
     )
 
@@ -202,6 +209,7 @@ llm = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0) # Use a recent chat 
 # Create the RAG chain
 rag_chain = create_rag_chain_with_source(llm, vectorstore)
 
+# --- Example Usage ---
 # --- Example Usage ---
 if __name__ == "__main__":
     while True:
