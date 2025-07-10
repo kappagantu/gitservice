@@ -42,15 +42,6 @@ cd your-repo
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
-
-### 3. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-> Make sure to include `langchain`, `openai`, `chromadb`, `pydantic`, and any other necessary packages in `requirements.txt`.
-
 ---
 
 ## Configuration
