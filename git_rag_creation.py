@@ -121,11 +121,7 @@ def create_rag_chain_with_source(llm, vectorstore):
     format_instructions = output_parser.get_format_instructions()
 
     # 3. Define the prompt for the QA chain
-    # It's crucial to include format_instructions in your prompt
-    # ... inside create_rag_chain_with_source, in your template definition ...
-
-    # ... inside create_rag_chain_with_source, in your template definition ...
-
+    
     
     templatelatest = """You are a highly accurate AI assistant. Your sole task is to answer the user's question based STRICTLY on the provided context. 
     Instructions:
@@ -155,9 +151,7 @@ def create_rag_chain_with_source(llm, vectorstore):
         format_instructions=format_instructions
     )
 
-    # 4. Create the core document chain: LLM + prompt to generate answer from context
-    # This chain takes 'context' (list of documents) and 'question' as input
-    # and outputs the raw answer string from the LLM.
+    # 4. Create the core document chain: LLM + prompt to generate an answer from context
     document_chain = create_stuff_documents_chain(llm, QA_CHAIN_PROMPT)
 
     # 5. Create the retrieval chain: Retriever + document chain
@@ -196,20 +190,11 @@ def create_rag_chain_with_source(llm, vectorstore):
     return qa_chain
 
 # Instantiate LLM
-# It's often recommended to use ChatOpenAI for models like gpt-3.5-turbo/gpt-4
-# because they are fine-tuned for chat and follow instructions better,
-# which is beneficial for OutputFixingParser.
-# If you truly intend to use the older text-completion models, keep OpenAI().
-# For better results with PydanticOutputParser and OutputFixingParser, consider:
-# from langchain_openai import ChatOpenAI
-# llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
-#llm = OpenAI(temperature=0) # Keeping the original `OpenAI` for now as per user's code
 llm = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0) # Use a recent chat model
 # For even better results, consider "gpt-4o" or "gpt-4-turbo" if available
 # Create the RAG chain
 rag_chain = create_rag_chain_with_source(llm, vectorstore)
 
-# --- Example Usage ---
 # --- Example Usage ---
 if __name__ == "__main__":
     while True:
@@ -232,8 +217,6 @@ if __name__ == "__main__":
                 if result["source_documents"]:
                     for doc in result["source_documents"]:
                         print(f"  - Source: {doc.metadata.get('source', 'N/A')}")
-                        # Optional: Uncomment to print a snippet of the source document content
-                        # print(f"    Content (first 100 chars): {doc.page_content[:100]}...")
                 else:
                     print("  No source documents found.")
 
