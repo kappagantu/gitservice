@@ -155,27 +155,16 @@ def create_rag_chain_with_source(llm, vectorstore):
     document_chain = create_stuff_documents_chain(llm, QA_CHAIN_PROMPT)
 
     # 5. Create the retrieval chain: Retriever + document chain
-    # This chain takes a 'question' string as input and returns a dictionary
-    # {'answer': ..., 'context': [source_documents]}.
     retrieval_chain = create_retrieval_chain(vectorstore.as_retriever(), document_chain)
 
     # 6. Create the OutputFixingParser instance
-    # This parser will attempt to fix the raw LLM output if the original
-    # PydanticOutputParser fails. It uses the LLM for the fixing process.
     fixed_output_parser = OutputFixingParser.from_llm(
         parser=output_parser,  # The original parser to try first
         llm=llm               # The LLM to use for fixing if parsing fails
     )
 
     # 7. Construct the final QA pipeline using LangChain Expression Language (LCEL)
-    # This pipeline will:
-    # - Take a 'question' as input.
-    # - Pass it to the `retrieval_chain` to get the 'answer' and 'context' (source_documents).
-    # - In parallel:
-    #    - Pass the 'answer' string to the `fixed_output_parser` to get the parsed Pydantic object.
-    #    - Extract the 'context' (source_documents).
-    # - Return a dictionary containing both the 'parsed_output' and 'source_documents'.
-    qa_chain = (
+        qa_chain = (
         RunnablePassthrough.assign(
             input=RunnableLambda(lambda x: x["question"])
         )
