@@ -164,7 +164,7 @@ def create_rag_chain_with_source(llm, vectorstore):
     )
 
     # 7. Construct the final QA pipeline using LangChain Expression Language (LCEL)
-        qa_chain = (
+    qa_chain = (
         RunnablePassthrough.assign(
             input=RunnableLambda(lambda x: x["question"])
         )
